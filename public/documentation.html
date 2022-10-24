@@ -4,15 +4,99 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css">
     <title>Documentation</title>
   </head>
   <body>
+    <header>
     <h1>Documentation Page</h1>
+    </header>
+    <main>
+    <h2>Overview</h2>
     <p>
       The web application will provide users with access to information about
       different movies, directors, and genres. Users will be able to sign up,
       update their personal information, and create a list of their favorite
       movies.
     </p>
+    <h2>Key Features</h2>
+  <table>
+    <thead>
+      <th>Endpoint Description</th>
+      <th>Method</th>
+      <th>URL</th>
+      <th>Body</th>
+      <th>Response</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Returns a list of ALL movies to the user</td>
+        <td>GET</td>
+        <td>/movies</td>
+        <td>None</td>
+        <td> A JSON holding data about all movies</td>
+      </tr>
+      <tr>
+        <td>Returns data about a single movie by title to the user</td>
+        <td>GET</td>
+        <td>/movies/:title</td>
+        <td>None</td>
+        <td>A JSON object holding data about a single movie title</td>
+      </tr>
+      <tr>
+        <td>Returns data about a genre (description) by name/title</td>
+        <td>GET</td>
+        <td>/movies/genre/:genreName</td>
+        <td>None</td>
+        <td>A JSON object holding data about a single movie genre</td>
+      </tr>
+      <tr>
+        <td>Returns name of director </td>
+        <td>GET</td>
+        <td>/movies/directors/:directorName</td>
+        <td>None</td>
+        <td>A JSON object holding data about a single movie director</td>
+      </tr>
+      <tr>
+        <td>Allow new users to register</td>
+        <td>POST</td>
+        <td>/users</td>
+        <td>A JSON object holding data about user to add</td>
+        <td> A JSON obect with added user data</td>
+      </tr>
+      <tr>
+        <td>Allows users to update their user info (username)</td>
+        <td>PUT</td>
+        <td>/users/:id</td>
+        <td>None</td>
+        <td>An JSON object holding updated user data</td>
+      </tr>
+      <tr>
+        <td>Allows users to add a movie from their list of favorites </td>
+        <td>POST</td>
+        <td>users/:id/:movieTitle</td>
+        <td>None</td>
+        <td>A message indicating the movie title has been added</td>
+      </tr>
+      <tr>
+        <td>Removes a movie from a user's list of favorite movies</td>
+        <td>DELETE</td>
+        <td>/users/:id/:movieTitle</td>
+        <td>None</td>
+        <td>A message indicating the movie title has been removed</td>
+      </tr>
+      <tr>
+        <td>Allow existing users to deregister </td>
+        <td>DELETE</td>
+        <td>/users/:id/</td>
+        <td>None</td>
+        <td>A message indicating user has been removed</td>
+      </tr>
+    </tbody>
+  </table>
+  </main>
+  
+</body>
+</html>
   </body>
 </html>
