@@ -58,6 +58,13 @@
         <td>A JSON object holding data about a single movie director</td>
       </tr>
       <tr>
+        <td>Returns list of users </td>
+        <td>GET</td>
+        <td>/users</td>
+        <td>None</td>
+        <td>A JSON object holding data about a single movie director</td>
+      </tr>
+      <tr>
         <td>Allow new users to register</td>
         <td>POST</td>
         <td>/users</td>
@@ -67,28 +74,28 @@
       <tr>
         <td>Allows users to update their user info (username)</td>
         <td>PUT</td>
-        <td>/users/:id</td>
+        <td>/users/:Username</td>
         <td>None</td>
         <td>An JSON object holding updated user data</td>
       </tr>
       <tr>
         <td>Allows users to add a movie from their list of favorites </td>
         <td>POST</td>
-        <td>users/:id/:movieTitle</td>
+        <td>users/:Username/movies/:MovieID</td>
         <td>None</td>
         <td>A message indicating the movie title has been added</td>
       </tr>
       <tr>
         <td>Removes a movie from a user's list of favorite movies</td>
         <td>DELETE</td>
-        <td>/users/:id/:movieTitle</td>
+        <td>users/:Username/movies/:MovieID</td>
         <td>None</td>
         <td>A message indicating the movie title has been removed</td>
       </tr>
       <tr>
         <td>Allow existing users to deregister </td>
         <td>DELETE</td>
-        <td>/users/:id/</td>
+        <td>/users/:Username</td>
         <td>None</td>
         <td>A message indicating user has been removed</td>
       </tr>
