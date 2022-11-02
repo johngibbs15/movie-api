@@ -9,15 +9,18 @@ const app = express();
 const Movies = Models.Movie;
 const Users = Models.User;
 
-let auth = require('./auth')(app);
-
-const passport = require('passport');
-require('./passport');
+// connect movieDB
 
 mongoose.connect('mongodb://localhost:27017/movieDB', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
+
+//Require passport module and import passport.js file
+
+let auth = require('./auth')(app);
+const passport = require('passport');
+require('./passport');
 
 app.use(bodyParser.json());
 app.use(morgan('common'));
@@ -200,33 +203,29 @@ app.get(
 
 // allow users to register what at /users
 
-app.post(
-    '/users',
-    passport.authenticate('jwt', { session: false }),
-    (req, res) => {
-        Users.findOne({ Username: req.body.Username }).then((user) => {
-            if (user) {
-                return res.status
-                    .apply(400)
-                    .send(req.body.Username + 'aleady exisits');
-            } else {
-                Users.create({
-                    Username: req.body.Username,
-                    Password: req.body.Password,
-                    Email: req.body.Email,
-                    Birthday: req.body.Birthday,
+app.post('/users', (req, res) => {
+    Users.findOne({ Username: req.body.Username }).then((user) => {
+        if (user) {
+            return res.status
+                .apply(400)
+                .send(req.body.Username + 'aleady exisits');
+        } else {
+            Users.create({
+                Username: req.body.Username,
+                Password: req.body.Password,
+                Email: req.body.Email,
+                Birthday: req.body.Birthday,
+            })
+                .then((user) => {
+                    res.status(201).json(user);
                 })
-                    .then((user) => {
-                        res.status(201).json(user);
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        res.status(500).send('Error: ' + err);
-                    });
-            }
-        });
-    }
-);
+                .catch((err) => {
+                    console.log(err);
+                    res.status(500).send('Error: ' + err);
+                });
+        }
+    });
+});
 
 // update user what at /users/:Username
 
