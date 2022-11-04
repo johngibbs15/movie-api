@@ -13,7 +13,13 @@ const { check, validationResult } = require('express-validator');
 
 // connect movieDB
 
-mongoose.connect('mongodb://localhost:27017/movieDB', {
+// mongoose.connect('mongodb://localhost:27017/movieDB', {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+// });
+
+// connect movieDB to atlas
+mongoose.connect('process.env.CONNECTION_URI', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
