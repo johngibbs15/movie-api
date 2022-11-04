@@ -19,7 +19,7 @@ const { check, validationResult } = require('express-validator');
 // });
 
 // connect movieDB to atlas
-mongoose.connect('process.env.CONNECTION_URI', {
+mongoose.connect(process.env.CONNECTION_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
