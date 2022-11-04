@@ -94,10 +94,10 @@ app.get(
     }
 );
 
-// return movie director when at /movies/directors/directorName
+// return movie director when at /movies/directors/director
 
 app.get(
-    '/movies/directors/:directorName',
+    '/movies/directors/:director',
     passport.authenticate('jwt', { session: false }),
     (req, res) => {
         Movies.findOne({ 'Director.Name': req.params.directorName })
@@ -231,30 +231,34 @@ app.post(
         if (!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array() });
         }
+
         let hashedPassword = Users.hashPassword(req.body.Password);
-        Users.findOne({ Username: req.body.Username }).then((user) => {
-            if (user) {
-                return res.status
-                    .apply(400)
-                    .send(req.body.Username + 'aleady exisits');
-            } else {
-                Users.create(
-                    {
+        Users.findOne({ Username: req.body.Username })
+            .then((user) => {
+                if (user) {
+                    return res
+                        .status(400)
+                        .send(req.body.Username + ' already exists');
+                } else {
+                    Users.create({
                         Username: req.body.Username,
                         Password: hashedPassword,
                         Email: req.body.Email,
                         Birthday: req.body.Birthday,
-                    }
+                    })
                         .then((user) => {
                             res.status(201).json(user);
                         })
-                        .catch((err) => {
-                            console.log(err);
-                            res.status(500).send('Error: ' + err);
-                        })
-                );
-            }
-        });
+                        .catch((error) => {
+                            console.error(error);
+                            res.status(500).send('Error: ' + error);
+                        });
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                res.status(500).send('Error: ' + error);
+            });
     }
 );
 
