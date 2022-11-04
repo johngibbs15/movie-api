@@ -94,10 +94,10 @@ app.get(
     }
 );
 
-// return movie director when at /movies/directors/director
+// return movie director when at /movies/directors/directorName
 
 app.get(
-    '/movies/directors/:director',
+    '/movies/directors/:directorName',
     passport.authenticate('jwt', { session: false }),
     (req, res) => {
         Movies.findOne({ 'Director.Name': req.params.directorName })
