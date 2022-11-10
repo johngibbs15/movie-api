@@ -34,7 +34,6 @@ passport.use(
                         message: 'Incorrect password.',
                     });
                 }
-
                 console.log('finished');
                 return callback(null, user);
             });
