@@ -208,6 +208,19 @@ app.get('/users', (req, res) => {
         });
 });
 
+// return user info when at /users:Username
+
+app.get('/users/:Username', (req, res) => {
+    Users.find()
+        .then((users) => {
+            res.status(201).json(users);
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send('Error: ' + err);
+        });
+});
+
 // allow users to register what at /users
 
 app.post(
