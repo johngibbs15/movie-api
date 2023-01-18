@@ -211,7 +211,9 @@ app.get('/users', (req, res) => {
 // return user info when at /users:Username
 
 app.get('/users/:Username', (req, res) => {
-    Users.find()
+    const username = req.params.Username;
+
+    Users.findOne({ Username: username })
         .then((users) => {
             res.status(201).json(users);
         })
