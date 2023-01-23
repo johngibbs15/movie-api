@@ -175,7 +175,7 @@ app.post(
 
 app.delete(
     '/users/:Username/movies/:MovieID',
-    passport.authenticate('jwt', { session: false }),
+    // passport.authenticate('jwt', { session: false }),
     (req, res) => {
         Users.findOneAndUpdate(
             { Username: req.params.Username },
@@ -329,7 +329,7 @@ app.delete(
 
 app.get(
     '/documentation',
-    passport.authenticate('jwt', { session: false }),
+    // passport.authenticate('jwt', { session: false }),
     (req, res) => {
         res.sendFile('public/documentation.html', { root: __dirname });
     }
