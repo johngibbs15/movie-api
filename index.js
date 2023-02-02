@@ -197,31 +197,39 @@ app.delete(
 
 // return user info when at /users
 
-app.get('/users', (req, res) => {
-    Users.find()
-        .then((users) => {
-            res.status(201).json(users);
-        })
-        .catch((err) => {
-            console.log(err);
-            res.status(500).send('Error: ' + err);
-        });
-});
+app.get(
+    '/users',
+    passport.authenticate('jwt', { session: false }),
+    (req, res) => {
+        Users.find()
+            .then((users) => {
+                res.status(201).json(users);
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).send('Error: ' + err);
+            });
+    }
+);
 
 // return user info when at /users:Username
 
-app.get('/users/:Username', (req, res) => {
-    const username = req.params.Username;
+app.get(
+    '/users/:Username',
+    passport.authenticate('jwt', { session: false }),
+    (req, res) => {
+        const username = req.params.Username;
 
-    Users.findOne({ Username: username })
-        .then((users) => {
-            res.status(201).json(users);
-        })
-        .catch((err) => {
-            console.log(err);
-            res.status(500).send('Error: ' + err);
-        });
-});
+        Users.findOne({ Username: username })
+            .then((users) => {
+                res.status(201).json(users);
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).send('Error: ' + err);
+            });
+    }
+);
 
 // allow users to register what at /users
 
