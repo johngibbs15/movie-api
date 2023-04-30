@@ -27,6 +27,7 @@ mongoose.connect(process.env.CONNECTION_URI, {
 //Require passport module and import passport.js file
 
 const cors = require('cors');
+
 app.use(cors());
 
 let auth = require('./auth')(app);
@@ -151,7 +152,7 @@ app.post(
 
 app.post(
     '/users/:Username/movies/:MovieID',
-    passport.authenticate('jwt', { session: false }),
+    // passport.authenticate('jwt', { session: false }),
     (req, res) => {
         Users.findOneAndUpdate(
             { Username: req.params.Username },
@@ -175,7 +176,7 @@ app.post(
 
 app.delete(
     '/users/:Username/movies/:MovieID',
-    passport.authenticate('jwt', { session: false }),
+    // passport.authenticate('jwt', { session: false }),
     (req, res) => {
         Users.findOneAndUpdate(
             { Username: req.params.Username },
@@ -280,6 +281,30 @@ app.post(
             });
     }
 );
+
+app.post('/login', (req, res) => {
+    Users.findOne({ Username: req.body.Username })
+        .then((user) => {
+            if (!user) {
+                return res.status(400).send('User not found');
+            }
+
+            const passwordIsValid = user.validatePassword(req.body.Password);
+            if (!passwordIsValid) {
+                return res.status(401).send('Incorrect password');
+            }
+
+            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+                expiresIn: '7d',
+            });
+
+            res.status(200).json({ user: user.Username, token: token });
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        });
+});
 
 // update user what at /users/:Username
 
