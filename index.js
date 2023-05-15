@@ -46,6 +46,13 @@ app.get('/', (req, res) => {
 
 // return JSON object when at /movies
 
+/**
+ * @route GET /movies
+ * @group Movies
+ * @authentication JWT
+ * @returns {Array.<Movie>} 200 - An array of movies
+ * @returns {Error} 500 - Server error
+ */
 app.get(
     '/movies',
     passport.authenticate('jwt', { session: false }),
@@ -61,8 +68,14 @@ app.get(
     }
 );
 
-//get JSON movie info when seaeching for title
-
+/**
+ * @route GET /movies/{Title}
+ * @group Movies
+ * @authentication JWT
+ * @param {string} Title.path.required
+ * @returns {Movie} 200 - A movie object
+ * @returns {Error} 500 - Server error
+ */
 app.get(
     '/movies/:Title',
     passport.authenticate('jwt', { session: false }),
@@ -78,8 +91,14 @@ app.get(
     }
 );
 
-// return movie genre when at /movies/genre/genreName
-
+/**
+ * @route GET /movies/genre/{genreName}
+ * @group Movies
+ * @authentication JWT
+ * @param {string} genreName.path.required
+ * @returns {Genre} 200 - A genre object
+ * @returns {Error} 500 - Server error
+ */
 app.get(
     '/movies/genre/:genreName',
     passport.authenticate('jwt', { session: false }),
@@ -95,8 +114,14 @@ app.get(
     }
 );
 
-// return movie director when at /movies/directors/directorName
-
+/**
+ * @route GET /movies/directors/{directorName}
+ * @group Movies
+ * @authentication JWT
+ * @param {string} directorName.path.required
+ * @returns {Director} 200 - A director object
+ * @returns {Error} 500 - Server error
+ */
 app.get(
     '/movies/directors/:directorName',
     passport.authenticate('jwt', { session: false }),
@@ -112,8 +137,15 @@ app.get(
     }
 );
 
-// add a movie what at /movies
+/**
 
+@function
+@route POST /movies
+@authentication This route requires authentication using the 'jwt' strategy.
+@param {object} req - Express request object
+@param {object} res - Express response object
+@description This route is used to add a movie to the Movies collection. If a movie with the same Title already exists, it will return an error. If the movie is successfully added, it returns the movie object with a status code of 201.
+*/
 app.post(
     '/movies',
     passport.authenticate('jwt', { session: false }),
@@ -147,9 +179,14 @@ app.post(
         });
     }
 );
-
-// add a movie to user list when at /users/:Username/movies/:MovieID
-
+/**
+    
+    @function
+    @route POST /users/:Username/movies/:MovieID
+    @param {object} req - Express request object
+    @param {object} res - Express response object
+    @description This route is used to add a movie to the list of FavoriteMovies of a specific user. It finds the user with the specified username and updates their FavoriteMovies list to include the specified movie ID. If the update is successful, it returns the updated user object.
+    */
 app.post(
     '/users/:Username/movies/:MovieID',
     // passport.authenticate('jwt', { session: false }),
@@ -172,32 +209,41 @@ app.post(
     }
 );
 
-// delete a movie from user list when at /users/:Username/movies/:MovieID
-
-app.delete(
-    '/users/:Username/movies/:MovieID',
-    // passport.authenticate('jwt', { session: false }),
-    (req, res) => {
-        Users.findOneAndUpdate(
-            { Username: req.params.Username },
-            {
-                $pull: { FavoriteMovies: req.params.MovieID },
-            },
-            { new: true },
-            (err, updatedUser) => {
-                if (err) {
-                    console.log(err);
-                    res.status(500).send('Error ' + err);
-                } else {
-                    res.json(updatedUser);
-                }
+/**
+ * @function
+ * @route DELETE /users/:Username/movies/:MovieID
+ * @description Deletes a movie from the user's list of favorite movies.
+ * @param {string} req.params.Username - The username of the user.
+ * @param {string} req.params.MovieID - The ID of the movie to be removed.
+ * @returns {object} The updated user object.
+ * @throws Will return an error message with a status code of 500 in case of any server error.
+ */
+app.delete('/users/:Username/movies/:MovieID', (req, res) => {
+    Users.findOneAndUpdate(
+        { Username: req.params.Username },
+        {
+            $pull: { FavoriteMovies: req.params.MovieID },
+        },
+        { new: true },
+        (err, updatedUser) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send('Error ' + err);
+            } else {
+                res.json(updatedUser);
             }
-        );
-    }
-);
+        }
+    );
+});
 
-// return user info when at /users
-
+/**
+ * @function
+ * @route GET /users
+ * @description Gets the list of all users.
+ * @param {object} req.user - The authenticated user object.
+ * @returns {object} An array of user objects.
+ * @throws Will return an error message with a status code of 500 in case of any server error.
+ */
 app.get(
     '/users',
     passport.authenticate('jwt', { session: false }),
@@ -232,8 +278,11 @@ app.get(
     }
 );
 
-// allow users to register what at /users
-
+/**
+ * @route POST /users
+ * @description Allow users to register a new account
+ * @access Private
+ */
 app.post(
     '/users',
     [
@@ -282,61 +331,11 @@ app.post(
     }
 );
 
-app.post('/login', (req, res) => {
-    Users.findOne({ Username: req.body.Username })
-        .then((user) => {
-            if (!user) {
-                return res.status(400).send('User not found');
-            }
-
-            const passwordIsValid = user.validatePassword(req.body.Password);
-            if (!passwordIsValid) {
-                return res.status(401).send('Incorrect password');
-            }
-
-            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-                expiresIn: '7d',
-            });
-
-            res.status(200).json({ user: user.Username, token: token });
-        })
-        .catch((err) => {
-            console.error(err);
-            res.status(500).send('Error: ' + err);
-        });
-});
-
-// update user what at /users/:Username
-
-app.put(
-    '/users/:Username',
-    passport.authenticate('jwt', { session: false }),
-    (req, res) => {
-        Users.findOneAndUpdate(
-            { Username: req.params.Username },
-            {
-                $set: {
-                    Username: req.body.Username,
-                    Password: req.body.Password,
-                    Email: req.body.Email,
-                    Birthday: req.body.Birthday,
-                },
-            },
-            { new: true },
-            (err, updatedUser) => {
-                if (err) {
-                    console.log(err);
-                    res.status(500).send('Error: ' + err);
-                } else {
-                    res.json(updatedUser);
-                }
-            }
-        );
-    }
-);
-
-//deregister user when at /users/:Username
-
+/**
+ * @route DELETE /users/:Username
+ * @description Deregister a user account
+ * @access Private
+ */
 app.delete(
     '/users/:Username',
     passport.authenticate('jwt', { session: false }),
@@ -358,8 +357,11 @@ app.delete(
     }
 );
 
-// get api documentation what at /documentation
-
+/**
+ * @route GET /documentation
+ * @description Get API documentation page
+ * @access Private
+ */
 app.get(
     '/documentation',
     passport.authenticate('jwt', { session: false }),
